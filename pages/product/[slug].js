@@ -5,11 +5,16 @@ import { urlFor, client } from "../../lib/client";
 import React ,{useState} from "react";
 import { AiOutlineMinus,AiOutlinePlus,AiFillStar,AiOutlineStar } from "react-icons/ai";
 import { Product } from "../../components/Index";
+import { useStateContext } from "../../context/StateContext";
 
 const ProductDetails = ({ product, products }) => {
   //prop is destructured below. then we no need to repaet product.image,  likewise
   const { image, name, details } = product;
   const [index, setIndex] = useState(0); //initially show 0th image
+
+
+  //me function define kla Statecontext file eke. than hook ekk wge use krnn puluwn
+  const {decQty,incQty,qty,onAdd} = useStateContext(); //importing the context to use the functions in it.
 
   return (
     <div>
@@ -47,17 +52,17 @@ const ProductDetails = ({ product, products }) => {
           <div className="quantity">
             <h3>Quantity:</h3>
             <p className="quantity-desc">
-              <span className="minus" onClick="">
+              <span className="minus" onClick={decQty}>
                 <AiOutlineMinus />
               </span>
-              <span className="num">0</span>
-              <span className="plus" onClick="">
+              <span className="num" onClick="">{qty}</span>
+              <span className="plus" onClick={incQty}>
                 <AiOutlinePlus />
               </span>
             </p>
         </div>
         <div className="buttons">  
-          <button type="button" className="add-to-cart" onClick="">Add to Cart
+          <button type="button" className="add-to-cart" onClick={()=>onAdd(product,qty)}>Add to Cart
             </button>
           <button type="button" className="buy-now" onClick="">Buy Now</button>
         </div>
