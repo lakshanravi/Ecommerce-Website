@@ -1,8 +1,7 @@
 //in here we ar going to manage entire state of the application
 //quantity wl ehem mulin tynn oni state ek meken tm define krnne 0 em kyl
 
-import cart from '@/components/Cart';
-import product from '@/sanity-backend/schemaTypes/product';
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 //to appier popup notification
@@ -50,16 +49,33 @@ toast.success(`${qty} ${product.name} added to the cart.`); //show success messa
 
 }
 
+const onRemove=(product)=>{
+ const foundProduct = cartItems.find((item) => item._id === product._id); //to find the product in the cart
+ const newCartItems= cartItems.filter((item)=>item._id!== product._id);
+
+ setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct.price * foundProduct.quantity); //update the total price
+setTotalQuantities((prevTotalQuantities) => prevTotalQuantities - foundProduct.quantity); //update the total quantities
+setCartItems(newCartItems); //update the cart items
+}
+
 const toggleCartItemQuantity = (id, value) => {
   foundProduct = cartItems.find((item) => item._id === id); //to find the product in the cart
   index = cartItems.findIndex((product) => product._id === id); //to find the index of the product in the cart
+  const newCartItems= cartItems.filter((item)=>item._id!==id); //remove the product from the cart
   if (value === 'inc') {
-    foundProduct.quantity += 1; //if the product is already in the cart, increment the quantity of the product by 1
-    setCartItems();
-    cartItems[index] = foundProduct; //update the cart items
-
-  }else if (value === 'dec') {
   
+ 
+ //below we pdating the cart with the current cart items and we addinh the new one to the cart
+    setCartItems([...newCartItems,{...foundProduct,quantity:foundProduct.quantity+1}]); //update the cart items
+    setTotalPrice((prevTotalPrice) => prevTotalPrice + foundProduct.price); //update the total price
+    setTotalQuantities((prevTotalQuantities) => prevTotalQuantities + 1); //update the total quantities
+  }else if (value === 'dec') {
+    if (foundProduct.quantity > 1) {
+    setCartItems([...newCartItems,{...foundProduct,quantity:foundProduct.quantity-1}]); //update the cart items
+    setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct.price); //update the total price
+    setTotalQuantities((prevTotalQuantities) => prevTotalQuantities -1); //update the total quantities
+    }
+}
 }
 
 
@@ -85,10 +101,13 @@ return (
         totalPrice,
         totalQuantities,
         qty,
+
         setShowCart,
         incQty,
         decQty,
-        onAdd
+        onAdd,
+        toggleCartItemQuantity,
+        onRemove
         
       }}
     >
